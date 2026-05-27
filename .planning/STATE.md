@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-27
-**Current phase:** Phase 2 — Hydra Config Templates (context gathered, ready for planning)
+**Current phase:** Phase 2 — Hydra Config Templates (complete)
 
 ## Project Reference
 
@@ -15,15 +15,15 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | Dataset Preparation | ✅ Complete (2/2 plans) |
-| 2 | Hydra Config Templates | ⬜ Not started |
+| 2 | Hydra Config Templates | ✅ Complete (4/4 plans) |
 | 3 | Training Loop Integration | ⬜ Not started |
 | 4 | Checkpoint Export & Validation | ⬜ Not started |
 | 5 | Runbook Documentation | ⬜ Not started |
 
 ## Current Position
 
-- **Phase:** 2 — Hydra Config Templates (context gathered)
-- **Next:** Plan Phase 2 → `/gsd-plan-phase 02`
+- **Phase:** 2 — Hydra Config Templates (complete, 4/4 plans)
+- **Next:** Verify Phase 2 → `/gsd-verify-work 02` or plan Phase 3 → `/gsd-plan-phase 03`
 
 ## Decisions Recorded
 
@@ -33,11 +33,14 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 - D-13: sys.exit(1) with stderr message on missing required COCO keys (not Python traceback)
 - D-14: Stats summary always printed: total images, per-split count, per-category instances
 - T-02-01: copy.deepcopy() on fixtures before mutation prevents cross-test pollution
+- D-P2-01: Explicit LR literals (8e-5, 2.5e-6) instead of ${times:...} resolver in base.yaml
+- D-P2-02: 4 REQUIRED markers (including experiment_log_dir) not 3
+- D-P2-03: Config names use configs/ prefix with initialize_config_module("sam3.train")
+- D-P2-04: sam3 package stub for smoke test (avoids PyTorch ≥ 2.3 model dep)
 
 ## Next Step
 
-Run `/gsd-plan-phase 02` to plan Phase 2: Hydra Config Templates.
-Context gathered: `.planning/phases/02-hydra-config-templates/02-CONTEXT.md`
+Phase 2 complete. Run `/gsd-verify-work 02` to verify or `/gsd-plan-phase 03` to plan Phase 3: Training Loop Integration.
 
 ## Planning Artifacts
 

@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: Dataset Preparation** — CVAT COCO export → SAM3-ready train/val JSON splits
-- [ ] **Phase 2: Hydra Config Templates** — Drop-in config files that wire a dataset to a training run
+- [x] **Phase 2: Hydra Config Templates** — Drop-in config files that wire a dataset to a training run
 - [ ] **Phase 3: Training Loop Integration** — End-to-end fine-tuning with eval metrics and TensorBoard
 - [ ] **Phase 4: Checkpoint Export & Validation** — Best checkpoint saved and verified against SAM3 API
 - [ ] **Phase 5: Runbook Documentation** — Written guide that makes the pipeline self-service
@@ -65,10 +65,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Create `sam3/train/configs/custom_finetune/base.yaml` (full standalone config, segmentation enabled, SAM3 norms, small-dataset LR defaults, 4 REQUIRED markers)
-- [ ] 02-02-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/decoder_only.yaml` (delta override: lr_scale: 0.03)
-- [ ] 02-03-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/full_finetune.yaml` (delta override: lrd_vision_backbone: 0.9, lr_vision_backbone: 2.5e-5)
-- [ ] 02-04-PLAN.md — Create `scripts/test_config_parse.py` smoke test + run (Hydra compose API, asserts all three configs parse)
+- [x] 02-01-PLAN.md — Create `sam3/train/configs/custom_finetune/base.yaml` (full standalone config, segmentation enabled, SAM3 norms, small-dataset LR defaults, 4 REQUIRED markers)
+- [x] 02-02-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/decoder_only.yaml` (delta override: lr_scale: 0.03)
+- [x] 02-03-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/full_finetune.yaml` (delta override: lrd_vision_backbone: 0.9, lr_vision_backbone: 2.5e-5)
+- [x] 02-04-PLAN.md — Create `scripts/test_config_parse.py` smoke test + run (Hydra compose API, asserts all three configs parse)
 
 ---
 
