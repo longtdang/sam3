@@ -6,7 +6,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Dataset Preparation** — CVAT COCO export → SAM3-ready train/val JSON splits
+- [x] **Phase 1: Dataset Preparation** — CVAT COCO export → SAM3-ready train/val JSON splits
 - [ ] **Phase 2: Hydra Config Templates** — Drop-in config files that wire a dataset to a training run
 - [ ] **Phase 3: Training Loop Integration** — End-to-end fine-tuning with eval metrics and TensorBoard
 - [ ] **Phase 4: Checkpoint Export & Validation** — Best checkpoint saved and verified against SAM3 API
@@ -28,11 +28,11 @@
 2. **Add unit tests for CVAT fixups** — Cover the three repair cases (ID reindex, prefix strip, category reindex) with minimal fixture JSON files.
 
 **Success Criteria:**
-- [ ] Running `python scripts/prepare_dataset.py --ann-file instances_default.json --img-folder images/ --output data/splits/` produces `train.json` and `val.json` with no 0-based IDs and no broken `file_name` paths.
-- [ ] The script rejects malformed input (missing required COCO keys) with a clear error message rather than a Python traceback.
-- [ ] Output includes a printed summary: total images, images per split, and instance count per category.
-- [ ] `--split-ratio` and `--seed` CLI flags override the 80/20 default and random seed 42 default.
-- [ ] All categories present in the source JSON appear in both split files (stratified split preserves rare classes).
+- [x] Running `python scripts/prepare_dataset.py --ann-file instances_default.json --img-folder images/ --output data/splits/` produces `train.json` and `val.json` with no 0-based IDs and no broken `file_name` paths.
+- [x] The script rejects malformed input (missing required COCO keys) with a clear error message rather than a Python traceback.
+- [x] Output includes a printed summary: total images, images per split, and instance count per category.
+- [x] `--split-ratio` and `--seed` CLI flags override the 80/20 default and random seed 42 default.
+- [x] All categories present in the source JSON appear in both split files (stratified split preserves rare classes).
 
 **Plans:** 2 plans
 
