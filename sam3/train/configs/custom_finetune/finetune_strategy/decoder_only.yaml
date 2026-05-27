@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - /configs/custom_finetune/base  # inherit all settings from base.yaml
+  - _self_
+
+# ============================================================================
+# Decoder-Only Fine-Tune Strategy
+# ============================================================================
+# This config documents the decoder-only strategy that base.yaml already
+# applies by default. Use it as an explicit named alternative when switching
+# between strategies with: +finetune_strategy=decoder_only
+#
+# Strategy: Train only the decoder (cross-attention, query heads, class head).
+# The ViT backbone is effectively near-frozen via a low lr_scale (0.03),
+# keeping backbone LR at ~7.5e-6 — roughly 30× lower than a full fine-tune.
+#
+# Recommended for: datasets < 500 images where full fine-tune risks overfitting.
+# ============================================================================
+
+scratch:
+  lr_scale: 0.03  # decoder-only: backbone near-frozen (base.yaml default — explicit here for clarity)
