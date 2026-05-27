@@ -61,7 +61,9 @@ scratch:
   gather_pred_via_filesys: false  # True only for large multi-node distributed eval
 
   # --- Learning rates (D-08/D-12: decoder-only defaults, explicit literals not ${times:...} resolver) ---
-  lr_scale: 0.03           # decoder-only strategy: backbone effectively near-frozen
+  # INFORMATIONAL — lr_scale does not affect optimizer LRs (see explicit values below).
+  # Adjusting lr_scale has no effect; change the literal values directly.
+  lr_scale: 0.03           # informational: backbone LR ≈ 0.03× transformer LR (for reference only)
   lr_transformer: 8e-5     # D-12: transformer / cross-attention / class head LR
   lr_vision_backbone: 2.5e-6  # D-12: ViT trunk LR (low → near-frozen in decoder-only)
   lr_language_backbone: 1.5e-6  # language backbone LR

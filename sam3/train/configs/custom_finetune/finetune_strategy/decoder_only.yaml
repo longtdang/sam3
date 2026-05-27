@@ -11,11 +11,15 @@ defaults:
 # between strategies with: +finetune_strategy=decoder_only
 #
 # Strategy: Train only the decoder (cross-attention, query heads, class head).
-# The ViT backbone is effectively near-frozen via a low lr_scale (0.03),
-# keeping backbone LR at ~7.5e-6 — roughly 30× lower than a full fine-tune.
+# The ViT backbone is near-frozen via a low literal lr_vision_backbone (2.5e-6),
+# roughly 10× lower than full fine-tune (2.5e-5). Override lr_vision_backbone
+# directly to adjust the backbone freeze degree.
 #
 # Recommended for: datasets < 500 images where full fine-tune risks overfitting.
 # ============================================================================
 
 scratch:
-  lr_scale: 0.03  # decoder-only: backbone near-frozen (base.yaml default — explicit here for clarity)
+  lr_scale: 0.03        # informational: backbone LR ≈ 0.03× transformer LR (does not affect optimizer)
+  lr_transformer: 8e-5  # decoder and cross-attention heads only
+  lr_vision_backbone: 2.5e-6   # near-frozen: ~10× lower than full fine-tune (2.5e-5)
+  lr_language_backbone: 1.5e-6  # near-frozen: ~10× lower than full fine-tune (1.5e-5)
