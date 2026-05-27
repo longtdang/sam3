@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-27
-**Current phase:** Phase 1 — context gathered, ready for planning
+**Current phase:** Phase 1 — Dataset Preparation (Plan 01 complete)
 
 ## Project Reference
 
@@ -14,15 +14,30 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Dataset Preparation | ⬜ Not started |
+| 1 | Dataset Preparation | 🔄 In progress (1/2 plans complete) |
 | 2 | Hydra Config Templates | ⬜ Not started |
 | 3 | Training Loop Integration | ⬜ Not started |
 | 4 | Checkpoint Export & Validation | ⬜ Not started |
 | 5 | Runbook Documentation | ⬜ Not started |
 
+## Current Position
+
+- **Phase:** 1 — Dataset Preparation
+- **Plan:** 01-01 complete → next: 01-02
+- **Completed:** Plan 01-01 (test scaffolding + prepare_dataset.py)
+- **Next:** Plan 01-02 (unit tests in tests/test_prepare_dataset.py)
+
+## Decisions Recorded
+
+- D-01: Stratified-by-category split using greedy multi-label algorithm (no sklearn)
+- D-06/D-07: Silent basename strip for file_name prefix repair (os.path.basename)
+- D-10: Independent reindex per ID type — handles mixed 0/1-based CVAT exports
+- D-13: sys.exit(1) with stderr message on missing required COCO keys (not Python traceback)
+- D-14: Stats summary always printed: total images, per-split count, per-category instances
+
 ## Next Step
 
-Run `/gsd-plan-phase 1` to plan Phase 1: Dataset Preparation.
+Run `/gsd-execute-phase 01-02` to execute Plan 02: Unit tests for prepare_dataset.py.
 
 ## Planning Artifacts
 

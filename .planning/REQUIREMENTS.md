@@ -7,10 +7,10 @@
 
 ### Dataset Preparation
 
-- [ ] **DATA-01**: A script converts a CVAT COCO export into SAM3-compatible train/val JSON splits (80/20 random split, stratified by category)
-- [ ] **DATA-02**: The script validates and fixes common CVAT quirks: 0-based IDs → 1-based reindex, `file_name` prefix normalization, contiguous category IDs
-- [ ] **DATA-03**: Script is configurable via CLI args: input annotation file, image folder, output directory, split ratio, random seed
-- [ ] **DATA-04**: Script reports dataset statistics after preparation: total images, images per split, instances per category
+- [x] **DATA-01**: A script converts a CVAT COCO export into SAM3-compatible train/val JSON splits (80/20 random split, stratified by category)
+- [x] **DATA-02**: The script validates and fixes common CVAT quirks: 0-based IDs → 1-based reindex, `file_name` prefix normalization, contiguous category IDs
+- [x] **DATA-03**: Script is configurable via CLI args: input annotation file, image folder, output directory, split ratio, random seed
+- [x] **DATA-04**: Script reports dataset statistics after preparation: total images, images per split, instances per category
 
 ### Hydra Config
 

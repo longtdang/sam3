@@ -37,7 +37,7 @@
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Test scaffolding (tests/conftest.py fixtures) + scripts/prepare_dataset.py implementation (all 10 functions)
+- [x] 01-01-PLAN.md — Test scaffolding (tests/conftest.py fixtures) + scripts/prepare_dataset.py implementation (all 10 functions)
 - [ ] 01-02-PLAN.md — Unit tests in tests/test_prepare_dataset.py (7 test functions, all green)
 
 ---
@@ -143,7 +143,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Dataset Preparation | 0/2 | In progress | - |
+| 1. Dataset Preparation | 1/2 | In progress | - |
 | 2. Hydra Config Templates | 0/4 | Not started | - |
 | 3. Training Loop Integration | 0/6 | Not started | - |
 | 4. Checkpoint Export & Validation | 0/3 | Not started | - |
