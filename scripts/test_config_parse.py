@@ -7,7 +7,8 @@ Run from the sam3 project root:
 
 Tests:
   1. base.yaml composes and resolves all interpolations
-  2. finetune_strategy/decoder_only.yaml inherits base, lr_scale == 0.03
+  2. finetune_strategy/decoder_only.yaml inherits base, lr_scale == 0.03 (informational),
+     lr_vision_backbone == 2.5e-6 (near-frozen), and backbone LR is 10× lower than full_finetune
   3. finetune_strategy/full_finetune.yaml inherits base, lrd_vision_backbone == 0.9,
      lr_vision_backbone ≈ 2.5e-5
 
@@ -125,7 +126,7 @@ def main():
     # -------------------------------------------------------------------------
     try:
         cfg_decoder = compose_config("configs/custom_finetune/finetune_strategy/decoder_only")
-        # Verify CFG-02: decoder-only strategy has lr_scale = 0.03
+        # Verify lr_scale is still 0.03 (informational field — still present in config)
         assert math.isclose(cfg_decoder.scratch.lr_scale, 0.03, rel_tol=1e-6), (
             f"Expected lr_scale=0.03, got {cfg_decoder.scratch.lr_scale}"
         )
@@ -134,10 +135,21 @@ def main():
             f"decoder_only must inherit enable_segmentation=True from base, "
             f"got {cfg_decoder.scratch.enable_segmentation}"
         )
-        # Verify backbone near-frozen: lr_vision_backbone inherited as 2.5e-6
+        # Key strategy assertion: backbone LR must be near-frozen at 2.5e-6 (the literal value).
+        # This is ~10× lower than full fine-tune (2.5e-5) — verifies decoder-only truly near-freezes.
         assert math.isclose(cfg_decoder.scratch.lr_vision_backbone, 2.5e-6, rel_tol=1e-6), (
-            f"Expected lr_vision_backbone=2.5e-6 (near-frozen), "
+            f"Expected lr_vision_backbone=2.5e-6 (near-frozen decoder-only), "
             f"got {cfg_decoder.scratch.lr_vision_backbone}"
+        )
+        # Verify decoder-only backbone LR is LOWER than full fine-tune backbone LR (10× lower)
+        cfg_full_check = compose_config("configs/custom_finetune/finetune_strategy/full_finetune")
+        assert cfg_decoder.scratch.lr_vision_backbone < cfg_full_check.scratch.lr_vision_backbone, (
+            f"decoder_only lr_vision_backbone ({cfg_decoder.scratch.lr_vision_backbone}) "
+            f"must be lower than full_finetune ({cfg_full_check.scratch.lr_vision_backbone})"
+        )
+        ratio = cfg_full_check.scratch.lr_vision_backbone / cfg_decoder.scratch.lr_vision_backbone
+        assert math.isclose(ratio, 10.0, rel_tol=1e-3), (
+            f"Expected full_finetune/decoder_only backbone LR ratio ≈ 10×, got {ratio:.2f}×"
         )
         print("✓ custom_finetune/finetune_strategy/decoder_only")
     except Exception as e:
