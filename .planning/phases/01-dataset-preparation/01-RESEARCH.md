@@ -612,17 +612,19 @@ def print_stats(coco_in, train_coco, val_coco):
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **pyproject.toml `testpaths = ["tests"]` vs existing `test/` directory inconsistency**
    - What we know: `pyproject.toml` sets `testpaths = ["tests"]` (pytest discovers here), but the only existing test is `test/test_io_utils.py` (unittest-based, in a different directory)
    - What's unclear: Is the project intentionally migrating from `test/` to `tests/` for new tests, or should Phase 1 tests follow the existing `test/` convention with `unittest.TestCase`?
    - Recommendation: Create `tests/` as a new directory for Phase 1 pytest tests. If the planner disagrees, fall back to `test/` with `unittest.TestCase`. Both are valid; the pytest config points to `tests/`.
+   - **RESOLVED: Use `tests/` with pytest** — `pyproject.toml testpaths = ["tests"]` is authoritative; all Phase 1 tests go in `tests/test_prepare_dataset.py` using pytest functions.
 
 2. **`--img-folder` CLI arg: is it used in validation or just passed through?**
    - What we know: D-03 says warn about excluded images with filenames. The `--img-folder` arg is listed in DATA-03 requirements.
    - What's unclear: Does the script need to verify images actually exist on disk (using `img_folder`), or is the JSON the sole source of truth?
    - Recommendation: Don't require image existence check — the script operates on the JSON only. `--img-folder` is accepted as an argument for documentation/output purposes but not used to validate file existence. This keeps the script fast and testable without real images.
+   - **RESOLVED: JSON-only operation** — `--img-folder` is accepted as a `required` CLI arg (for downstream Hydra config documentation purposes) but the script does not check image file existence on disk.
 
 ---
 
