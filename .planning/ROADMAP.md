@@ -34,7 +34,11 @@
 - [ ] `--split-ratio` and `--seed` CLI flags override the 80/20 default and random seed 42 default.
 - [ ] All categories present in the source JSON appear in both split files (stratified split preserves rare classes).
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Test scaffolding (tests/conftest.py fixtures) + scripts/prepare_dataset.py implementation (all 10 functions)
+- [ ] 01-02-PLAN.md — Unit tests in tests/test_prepare_dataset.py (7 test functions, all green)
 
 ---
 
@@ -139,7 +143,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Dataset Preparation | 0/2 | Not started | - |
+| 1. Dataset Preparation | 0/2 | In progress | - |
 | 2. Hydra Config Templates | 0/4 | Not started | - |
 | 3. Training Loop Integration | 0/6 | Not started | - |
 | 4. Checkpoint Export & Validation | 0/3 | Not started | - |
