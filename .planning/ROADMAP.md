@@ -94,8 +94,11 @@ Plans:
 - [ ] Eval output in logs includes `coco_eval_segm_AP`, `coco_eval_segm_AP50`, and `coco_eval_segm_APs` (not bbox metrics).
 - [ ] Checkpoints appear in the configured output directory after each evaluation interval.
 
-**Plans:** TBD
-**UI hint**: no
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Add ColorJitter, GaussianBlur, RandomErasingAPI to basic.py + patch base.yaml (val_epoch_freq: 1 + augmentation entries)
+- [ ] 03-02-PLAN.md — Create scripts/test_training_config.py dry-run validation (asserts all 8 Phase 3 requirements)
 
 ---
 
