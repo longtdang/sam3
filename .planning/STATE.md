@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-27
-**Current phase:** Phase 1 — Dataset Preparation (Plan 01 complete)
+**Current phase:** Phase 1 — Dataset Preparation (ALL plans complete)
 
 ## Project Reference
 
@@ -14,7 +14,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | Dataset Preparation | 🔄 In progress (1/2 plans complete) |
+| 1 | Dataset Preparation | ✅ Complete (2/2 plans) |
 | 2 | Hydra Config Templates | ⬜ Not started |
 | 3 | Training Loop Integration | ⬜ Not started |
 | 4 | Checkpoint Export & Validation | ⬜ Not started |
@@ -22,10 +22,10 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 ## Current Position
 
-- **Phase:** 1 — Dataset Preparation
-- **Plan:** 01-01 complete → next: 01-02
-- **Completed:** Plan 01-01 (test scaffolding + prepare_dataset.py)
-- **Next:** Plan 01-02 (unit tests in tests/test_prepare_dataset.py)
+- **Phase:** 1 — Dataset Preparation ✅ Complete
+- **Plan:** 01-02 complete → Phase 1 done
+- **Completed:** Plan 01-01 (implementation), Plan 01-02 (unit tests — 7 passing)
+- **Next:** Phase 2 — Hydra Config Templates
 
 ## Decisions Recorded
 
@@ -34,10 +34,11 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 - D-10: Independent reindex per ID type — handles mixed 0/1-based CVAT exports
 - D-13: sys.exit(1) with stderr message on missing required COCO keys (not Python traceback)
 - D-14: Stats summary always printed: total images, per-split count, per-category instances
+- T-02-01: copy.deepcopy() on fixtures before mutation prevents cross-test pollution
 
 ## Next Step
 
-Run `/gsd-execute-phase 01-02` to execute Plan 02: Unit tests for prepare_dataset.py.
+Run `/gsd-execute-phase 02` to start Phase 2: Hydra Config Templates.
 
 ## Planning Artifacts
 
