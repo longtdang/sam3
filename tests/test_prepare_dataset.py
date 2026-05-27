@@ -51,7 +51,8 @@ def test_category_reindex(noncontiguous_cat_coco):
 
 
 def test_stratified_split():
-    """Stratified split produces non-empty train and val for a 10-image dataset."""
+    """Stratified split produces non-empty train and val for a 10-image dataset,
+    and the same seed always yields the same result (reproducibility)."""
     # Build a minimal dataset: 10 images, 5 with cat_id=1, 5 with cat_id=2
     image_ids = list(range(1, 11))
     anns_by_image = collections.defaultdict(list)
@@ -67,6 +68,20 @@ def test_stratified_split():
     assert len(val_ids) > 0, "val split must not be empty"
     assert len(train_ids) + len(val_ids) == len(image_ids), "all images must be assigned"
     assert set(train_ids).isdisjoint(set(val_ids)), "no image should appear in both splits"
+
+    # Same seed → identical result (reproducibility / SC-4)
+    train_ids2, val_ids2 = prepare_dataset.stratified_split(
+        image_ids, anns_by_image, cat_id_to_name, split_ratio=0.8, seed=42
+    )
+    assert train_ids == train_ids2, "--seed 42 must be reproducible"
+
+    # Different seed → at least one split differs (seed has effect)
+    train_ids3, val_ids3 = prepare_dataset.stratified_split(
+        image_ids, anns_by_image, cat_id_to_name, split_ratio=0.8, seed=99
+    )
+    assert (train_ids3 != train_ids) or (val_ids3 != val_ids), (
+        "--seed 99 should produce a different ordering than --seed 42"
+    )
 
 
 def test_cli_args(monkeypatch):

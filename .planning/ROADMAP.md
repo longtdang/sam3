@@ -28,7 +28,7 @@
 2. **Add unit tests for CVAT fixups** — Cover the three repair cases (ID reindex, prefix strip, category reindex) with minimal fixture JSON files.
 
 **Success Criteria:**
-- [ ] Running `python scripts/prepare_dataset.py --input instances_default.json --images images/ --output data/splits/` produces `train.json` and `val.json` with no 0-based IDs and no broken `file_name` paths.
+- [ ] Running `python scripts/prepare_dataset.py --ann-file instances_default.json --img-folder images/ --output data/splits/` produces `train.json` and `val.json` with no 0-based IDs and no broken `file_name` paths.
 - [ ] The script rejects malformed input (missing required COCO keys) with a clear error message rather than a Python traceback.
 - [ ] Output includes a printed summary: total images, images per split, and instance count per category.
 - [ ] `--split-ratio` and `--seed` CLI flags override the 80/20 default and random seed 42 default.

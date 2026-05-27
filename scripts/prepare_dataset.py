@@ -133,7 +133,7 @@ def stratified_split(
     Multi-label greedy stratified split.
     Assigns most-constrained images first; falls back to random for rare classes (D-02).
     """
-    rng = random.Random(seed)  # noqa: F841 — available for future tie-breaking use
+    rng = random.Random(seed)
 
     # Build per-image category sets
     img_categories: dict = collections.defaultdict(set)
@@ -161,9 +161,12 @@ def stratified_split(
     train_cat_count: dict = collections.Counter()
     val_cat_count: dict = collections.Counter()
 
-    # Most-constrained images first (most categories → process first)
+    # Seed-deterministic tie-breaking: shuffle first, then stable-sort by constraint level.
+    # Images with equal constraint counts retain a seed-dependent order so --seed is honoured.
+    shuffled = list(image_ids)
+    rng.shuffle(shuffled)
     sorted_images = sorted(
-        image_ids, key=lambda img_id: len(img_categories[img_id]), reverse=True
+        shuffled, key=lambda img_id: len(img_categories[img_id]), reverse=True
     )
 
     for img_id in sorted_images:
