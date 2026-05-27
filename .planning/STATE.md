@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-27
-**Current phase:** Phase 1 — Dataset Preparation (ALL plans complete)
+**Current phase:** Phase 2 — Hydra Config Templates (context gathered, ready for planning)
 
 ## Project Reference
 
@@ -22,10 +22,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 ## Current Position
 
-- **Phase:** 1 — Dataset Preparation ✅ Complete
-- **Plan:** 01-02 complete → Phase 1 done
-- **Completed:** Plan 01-01 (implementation), Plan 01-02 (unit tests — 7 passing)
-- **Next:** Phase 2 — Hydra Config Templates
+- **Phase:** 2 — Hydra Config Templates (context gathered)
+- **Next:** Plan Phase 2 → `/gsd-plan-phase 02`
 
 ## Decisions Recorded
 
@@ -38,7 +36,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 
 ## Next Step
 
-Run `/gsd-execute-phase 02` to start Phase 2: Hydra Config Templates.
+Run `/gsd-plan-phase 02` to plan Phase 2: Hydra Config Templates.
+Context gathered: `.planning/phases/02-hydra-config-templates/02-CONTEXT.md`
 
 ## Planning Artifacts
 
