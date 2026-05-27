@@ -22,11 +22,11 @@ Not in scope: SLURM support, LoRA adapters, mixed-precision training, actual tra
 
 ### Training Launcher
 - **D-03-01:** Use the existing `python sam3/train/train.py` launcher (NOT `torchrun`). The training stack uses `torch.multiprocessing.start_processes` internally via `submitit` LocalExecutor — `torchrun` is not the entry point.
-- **D-03-02:** GPU count is controlled via `--num_gpus N` CLI flag (not config YAML). The canonical 2-GPU command is:
+- **D-03-02:** GPU count is controlled via `--num-gpus N` CLI flag (not config YAML). The canonical 2-GPU command is:
   ```bash
-  python sam3/train/train.py --config-name configs/custom_finetune/base --num_gpus 2
+  python sam3/train/train.py --config configs/custom_finetune/base --num-gpus 2
   ```
-  Single-GPU: `--num_gpus 1`. Do NOT document `torchrun`.
+  Single-GPU: `--num-gpus 1`. Do NOT document `torchrun`. Note: `--config` (not `--config-name`), `--num-gpus` (hyphen, not underscore) — verified against `train.py` argparse definition.
 
 ### Data Augmentation
 - **D-03-03:** Add `ColorJitter` and `GaussianBlur` wrapper classes to `sam3/train/transforms/basic.py`, following the exact `RandomErasing` pattern (wraps `torchvision.transforms.v2.ColorJitter` / `.GaussianBlur`).
@@ -65,7 +65,7 @@ Not in scope: SLURM support, LoRA adapters, mixed-precision training, actual tra
 **Downstream agents MUST read these before planning or implementing.**
 
 ### Training Entry Point & Launcher
-- `sam3/train/train.py` — CLI entry point; `single_node_runner()` handles multi-GPU via `torch.multiprocessing`; `--num_gpus` CLI arg sets `cfg.launcher.gpus_per_node`
+- `sam3/train/train.py` — CLI entry point; `single_node_runner()` handles multi-GPU via `torch.multiprocessing`; `--num-gpus` CLI arg (hyphen) sets `cfg.launcher.gpus_per_node`
 
 ### Trainer Configuration
 - `sam3/train/trainer.py` — `Trainer` class; `val_epoch_freq` param (line ~159) controls eval interval; `logging_conf.tensorboard_writer` is the TensorBoard integration point

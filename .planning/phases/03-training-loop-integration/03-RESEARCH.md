@@ -509,22 +509,22 @@ def single_node_runner(cfg, main_port: int):
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`RandomErasing` naming conflict in `basic.py`**
    - What we know: `basic.py` already has `RandomErasing` with `(img, target)` signature; planner needs API-compatible version
    - What's unclear: Should planner add `RandomErasingAPI` (new name in `basic.py`) or replace the existing class?
-   - Recommendation: Add `RandomErasingAPI` alongside existing — preserves backward compatibility, avoids breaking any code that imports the `(img, target)` version
+   - RESOLVED: Add `RandomErasingAPI` alongside existing — preserves backward compatibility, avoids breaking any code that imports the `(img, target)` version
 
 2. **Augmentation on `decoder_only.yaml` and `full_finetune.yaml`**
    - What we know: These configs inherit from `base.yaml`; `train_transforms` is under `scratch` namespace
    - What's unclear: Do decoder_only/full_finetune configs override `train_transforms`? If so, augmentation must be added there too
-   - Recommendation: Check both files. Since they currently only override LR-related `scratch` fields, augmentation entries added to `base.yaml` will be inherited. No changes needed to override configs.
+   - RESOLVED: Check both files. Since they currently only override LR-related `scratch` fields, augmentation entries added to `base.yaml` will be inherited. No changes needed to override configs.
 
 3. **`test_training_config.py` scope: validate all 3 configs or just base?**
    - What we know: `test_config_parse.py` validates all 3 (base, decoder_only, full_finetune)
    - What's unclear: CONTEXT.md says "all three configs (base, decoder_only, full_finetune) can instantiate their datasets and trainers" 
-   - Recommendation: New script should test all 3 configs, asserting val_epoch_freq=1, TensorBoard block presence, and augmentation entries for each
+   - RESOLVED: New script should test all 3 configs, asserting val_epoch_freq=1, TensorBoard block presence, and augmentation entries for each
 
 ---
 
