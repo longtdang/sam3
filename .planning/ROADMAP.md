@@ -62,8 +62,13 @@ Plans:
 - [ ] Every field a user must change to run on a new dataset is marked with a `# REQUIRED:` inline comment.
 - [ ] `decoder_only.yaml` and `full_finetune.yaml` differ only in the LR/freeze strategy fields — all other values inherit from `base.yaml`.
 
-**Plans:** TBD
-**UI hint**: no
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Create `sam3/train/configs/custom_finetune/base.yaml` (full standalone config, segmentation enabled, SAM3 norms, small-dataset LR defaults, 4 REQUIRED markers)
+- [ ] 02-02-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/decoder_only.yaml` (delta override: lr_scale: 0.03)
+- [ ] 02-03-PLAN.md — Create `sam3/train/configs/custom_finetune/finetune_strategy/full_finetune.yaml` (delta override: lrd_vision_backbone: 0.9, lr_vision_backbone: 2.5e-5)
+- [ ] 02-04-PLAN.md — Create `scripts/test_config_parse.py` smoke test + run (Hydra compose API, asserts all three configs parse)
 
 ---
 
@@ -144,7 +149,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Dataset Preparation | 2/2 | ✅ Complete | 2026-05-27 |
-| 2. Hydra Config Templates | 0/4 | Not started | - |
+| 2. Hydra Config Templates | 0/4 | In progress | - |
 | 3. Training Loop Integration | 0/6 | Not started | - |
 | 4. Checkpoint Export & Validation | 0/3 | Not started | - |
 | 5. Runbook Documentation | 0/2 | Not started | - |
