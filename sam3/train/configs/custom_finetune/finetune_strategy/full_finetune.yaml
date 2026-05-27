@@ -9,12 +9,12 @@ defaults:
 # Switch to this config when you want to train ALL SAM3 parameter groups,
 # including the ViT backbone, with layer-wise LR decay (LLRD).
 #
-# Usage: python sam3/train/train.py --config-name custom_finetune/base \
-#            '+finetune_strategy=full_finetune'
+# Usage: python sam3/train/train.py \
+#            --config-name custom_finetune/finetune_strategy/full_finetune
 #
-# Strategy: Raise backbone LR 10× vs. decoder-only and apply LLRD (0.9)
-# across all ViT trunk layers. Lower layers receive exponentially smaller
-# LRs, which stabilizes early-layer features while adapting higher layers.
+# This config inherits base.yaml via its defaults list, then overrides the
+# backbone LR fields. Do not combine with --config-name custom_finetune/base
+# (+finetune_strategy syntax) — that would load base.yaml twice.
 #
 # Recommended for: datasets >= 500 images where full backbone adaptation
 # is feasible and decoder-only plateaus.
