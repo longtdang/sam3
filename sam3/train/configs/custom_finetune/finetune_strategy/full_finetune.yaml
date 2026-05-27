@@ -1,0 +1,29 @@
+# @package _global_
+defaults:
+  - /configs/custom_finetune/base  # inherit all settings from base.yaml
+  - _self_
+
+# ============================================================================
+# Full Fine-Tune Strategy
+# ============================================================================
+# Switch to this config when you want to train ALL SAM3 parameter groups,
+# including the ViT backbone, with layer-wise LR decay (LLRD).
+#
+# Usage: python sam3/train/train.py --config-name custom_finetune/base \
+#            '+finetune_strategy=full_finetune'
+#
+# Strategy: Raise backbone LR 10× vs. decoder-only and apply LLRD (0.9)
+# across all ViT trunk layers. Lower layers receive exponentially smaller
+# LRs, which stabilizes early-layer features while adapting higher layers.
+#
+# Recommended for: datasets >= 500 images where full backbone adaptation
+# is feasible and decoder-only plateaus.
+# ============================================================================
+
+scratch:
+  # Backbone LR raised 10× vs. decoder-only defaults in base.yaml
+  lr_vision_backbone: 2.5e-5   # 10× higher than base.yaml's 2.5e-6 (near-frozen)
+  lr_language_backbone: 1.5e-5  # 10× higher than base.yaml's 1.5e-6
+
+  # Layer-wise LR decay across all ViT trunk layers (matches roboflow full-FT reference)
+  lrd_vision_backbone: 0.9      # exponential decay per layer; 1.0 = uniform LR (no decay)
