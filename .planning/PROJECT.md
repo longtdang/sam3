@@ -60,14 +60,32 @@ Any team member can point the pipeline at a CVAT COCO export and produce a fine-
 - **Hardware**: Multi-GPU workstation (CUDA); no CPU-only or SLURM requirements for this milestone
 - **Model**: Fine-tune existing SAM3 weights only — no architectural modifications
 
+## Current State
+
+**Version:** v1.0 (shipped 2026-05-28)
+**Status:** Pipeline complete — 5 phases, 13 plans, all verified
+
+Key artifacts:
+- `FINE_TUNING.md` — self-service runbook at repo root
+- `scripts/prepare_dataset.py` — CVAT → SAM3-ready splits
+- `sam3/train/configs/custom_finetune/` — drop-in Hydra configs
+- `sam3/train/trainer.py` — patched to export `best_checkpoint.pth`
+- `scripts/test_checkpoint_compatibility.py` — smoke test for checkpoint
+
+**Deferred to v1.1:** Real training run on industrial defect dataset (AP50 > 0 smoke test)
+
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Freeze ViT backbone by default for small datasets | < 500 images is insufficient to update 1B ViT params without overfitting; decoder fine-tune proven effective for domain adaptation | — Pending |
-| Use COCO format as primary input | CVAT's default export; existing `coco_json_loaders.py` reduces integration effort | — Pending |
-| Build on existing Hydra config system | Avoids parallel config systems; users stay in the same workflow | — Pending |
-| Image-only for first milestone | User's dataset is images; keeps scope contained | — Pending |
+| Freeze ViT backbone by default for small datasets | < 500 images is insufficient to update 1B ViT params without overfitting | `decoder_only.yaml` is default |
+| Use COCO format as primary input | CVAT's default export; existing `coco_json_loaders.py` reduces integration effort | Phase 1 complete |
+| Build on existing Hydra config system | Avoids parallel config systems; users stay in the same workflow | Phase 2 complete |
+| Image-only for first milestone | User's dataset is images; keeps scope contained | Phase 1–5 complete |
+| `python sam3/train/train.py` (not torchrun) | train.py uses internal process spawning; torchrun would double-spawn and crash | Documented in FINE_TUNING.md |
+| Sam3Processor for inference | Public API that handles BatchedDatapoint internally | Phase 5 runbook |
+| SAM3 norms `[0.5, 0.5, 0.5]` | Not ImageNet; must match Sam3Processor internal normalization | base.yaml + gotcha 2 |
+| best_checkpoint.pth in HuggingFace format | Satisfies `_load_checkpoint` weights_only + "model" key requirements | Phase 4 |
 
 ## Evolution
 
