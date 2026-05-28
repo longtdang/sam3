@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-28
-**Current phase:** Phase 3 — Training Loop Integration (complete)
+**Current phase:** Phase 4 — Checkpoint Export & End-to-End Validation (complete)
 
 ## Project Reference
 
@@ -23,7 +23,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 ## Current Position
 
 - **Phase:** 3 — Training Loop Integration (complete, 2/2 plans)
-- **Next:** Verify Phase 3 → `/gsd-verify-work 03` or plan Phase 4 → `/gsd-plan-phase 04`
+- **Next:** Verify Phase 4 → `/gsd-verify-work 04` or plan Phase 5 → `/gsd-plan-phase 05`
 
 ## Decisions Recorded
 
@@ -43,6 +43,16 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 ## Next Step
 
 Phase 3 complete. Run `/gsd-verify-work 03` to verify or `/gsd-plan-phase 04` to plan Phase 4: Checkpoint Export & Validation.
+
+Phase 4 complete. Run `/gsd-verify-work 04` to verify or `/gsd-plan-phase 05` to plan Phase 5: Runbook Documentation.
+
+## Phase 4 Decisions
+
+- D-04-01: Fake dataset for CI; real data at `data/industrial_defect/` (train.json, val.json, images/)
+- D-04-02: `save_checkpoint()` patched to export `best_checkpoint.pth` in HF format (`{"model": {"detector.<k>": tensor}}`)
+- D-04-03 (revised): `test_checkpoint_compatibility.py` checks `len(model.state_dict()) > 0` instead of forward pass — `Sam3Image.forward()` requires `BatchedDatapoint`, no `SAM3ImagePredictor` exists
+- D-04-04: `generate_fake_dataset.py` — 5 images, 64×64, single "defect" category
+- D-04-05: VAL-01 `AP50 > 0` is manual on real data; CI asserts no crash (1-epoch dry run)
 
 ## Planning Artifacts
 

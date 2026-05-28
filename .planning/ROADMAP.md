@@ -8,8 +8,8 @@
 
 - [x] **Phase 1: Dataset Preparation** — CVAT COCO export → SAM3-ready train/val JSON splits
 - [x] **Phase 2: Hydra Config Templates** — Drop-in config files that wire a dataset to a training run
-- [ ] **Phase 3: Training Loop Integration** — End-to-end fine-tuning with eval metrics and TensorBoard
-- [ ] **Phase 4: Checkpoint Export & Validation** — Best checkpoint saved and verified against SAM3 API
+- [x] **Phase 3: Training Loop Integration** — End-to-end fine-tuning with eval metrics and TensorBoard
+- [x] **Phase 4: Checkpoint Export & Validation** — Best checkpoint saved and verified against SAM3 API
 - [ ] **Phase 5: Runbook Documentation** — Written guide that makes the pipeline self-service
 
 ---
@@ -123,9 +123,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Patch trainer.py::save_checkpoint() to export best_checkpoint.pth in HuggingFace inference format (CKPT-01, CKPT-02)
-- [ ] 04-02-PLAN.md — Create scripts/generate_fake_dataset.py (synthetic COCO, 5 images) + document 1-epoch training smoke test command (VAL-01)
-- [ ] 04-03-PLAN.md — Create scripts/test_checkpoint_compatibility.py (load best_checkpoint.pth via build_sam3_image_model, assert non-zero params) (CKPT-02, VAL-02)
+- [x] 04-01-PLAN.md — Patch trainer.py::save_checkpoint() to export best_checkpoint.pth in HuggingFace inference format (CKPT-01, CKPT-02)
+- [x] 04-02-PLAN.md — Create scripts/generate_fake_dataset.py (synthetic COCO, 5 images) + document 1-epoch training smoke test command (VAL-01)
+- [x] 04-03-PLAN.md — Create scripts/test_checkpoint_compatibility.py (load best_checkpoint.pth via build_sam3_image_model, assert non-zero params) (CKPT-02, VAL-02)
 
 ---
 
@@ -158,7 +158,7 @@ Plans:
 | 1. Dataset Preparation | 2/2 | ✅ Complete | 2026-05-27 |
 | 2. Hydra Config Templates | 0/4 | In progress | - |
 | 3. Training Loop Integration | 2/2 | ✅ Complete | 2026-05-28 |
-| 4. Checkpoint Export & Validation | 0/3 | Not started | - |
+| 4. Checkpoint Export & Validation | 3/3 | ✅ Complete | 2026-05-28 |
 | 5. Runbook Documentation | 0/2 | Not started | - |
 
 ---
@@ -196,10 +196,10 @@ Plans:
 | TRAIN-06 | Phase 3 | Pending |
 | EVAL-01 | Phase 3 | Pending |
 | EVAL-02 | Phase 3 | Pending |
-| CKPT-01 | Phase 4 | Pending |
-| CKPT-02 | Phase 4 | Pending |
-| VAL-01 | Phase 4 | Pending |
-| VAL-02 | Phase 4 | Pending |
+| CKPT-01 | Phase 4 | ✅ Complete |
+| CKPT-02 | Phase 4 | ✅ Complete |
+| VAL-01 | Phase 4 | ✅ Complete |
+| VAL-02 | Phase 4 | ✅ Complete |
 | DOC-01 | Phase 5 | Pending |
 | DOC-02 | Phase 5 | Pending |
 
