@@ -120,8 +120,12 @@ Plans:
 - [ ] Running the existing SAM3 inference script against `best_checkpoint.pth` on a validation image produces segmentation masks without runtime errors.
 - [ ] `coco_eval_segm_AP50 > 0` on the industrial defect dataset (smoke test — confirms the model is learning, not collapsing).
 
-**Plans:** TBD
-**UI hint**: no
+**Plans:** 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Patch trainer.py::save_checkpoint() to export best_checkpoint.pth in HuggingFace inference format (CKPT-01, CKPT-02)
+- [ ] 04-02-PLAN.md — Create scripts/generate_fake_dataset.py (synthetic COCO, 5 images) + document 1-epoch training smoke test command (VAL-01)
+- [ ] 04-03-PLAN.md — Create scripts/test_checkpoint_compatibility.py (load best_checkpoint.pth via build_sam3_image_model, assert non-zero params) (CKPT-02, VAL-02)
 
 ---
 
