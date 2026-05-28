@@ -97,8 +97,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Add ColorJitter, GaussianBlur, RandomErasingAPI to basic.py + patch base.yaml (val_epoch_freq: 1 + augmentation entries)
-- [ ] 03-02-PLAN.md — Create scripts/test_training_config.py dry-run validation (asserts all 8 Phase 3 requirements)
+- [x] 03-01-PLAN.md — Add ColorJitter, GaussianBlur, RandomErasingAPI to basic.py + patch base.yaml (val_epoch_freq: 1 + augmentation entries)
+- [x] 03-02-PLAN.md — Create scripts/test_training_config.py dry-run validation (asserts all 8 Phase 3 requirements)
 
 ---
 
@@ -153,7 +153,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Dataset Preparation | 2/2 | ✅ Complete | 2026-05-27 |
 | 2. Hydra Config Templates | 0/4 | In progress | - |
-| 3. Training Loop Integration | 0/6 | Not started | - |
+| 3. Training Loop Integration | 2/2 | ✅ Complete | 2026-05-28 |
 | 4. Checkpoint Export & Validation | 0/3 | Not started | - |
 | 5. Runbook Documentation | 0/2 | Not started | - |
 

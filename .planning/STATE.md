@@ -1,7 +1,7 @@
 # Project State
 
-**Last updated:** 2026-05-27
-**Current phase:** Phase 2 — Hydra Config Templates (complete)
+**Last updated:** 2026-05-28
+**Current phase:** Phase 3 — Training Loop Integration (complete)
 
 ## Project Reference
 
@@ -16,14 +16,14 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 |-------|------|--------|
 | 1 | Dataset Preparation | ✅ Complete (2/2 plans) |
 | 2 | Hydra Config Templates | ✅ Complete (4/4 plans) |
-| 3 | Training Loop Integration | ⬜ Not started |
+| 3 | Training Loop Integration | ✅ Complete (2/2 plans) |
 | 4 | Checkpoint Export & Validation | ⬜ Not started |
 | 5 | Runbook Documentation | ⬜ Not started |
 
 ## Current Position
 
-- **Phase:** 2 — Hydra Config Templates (complete, 4/4 plans)
-- **Next:** Verify Phase 2 → `/gsd-verify-work 02` or plan Phase 3 → `/gsd-plan-phase 03`
+- **Phase:** 3 — Training Loop Integration (complete, 2/2 plans)
+- **Next:** Verify Phase 3 → `/gsd-verify-work 03` or plan Phase 4 → `/gsd-plan-phase 04`
 
 ## Decisions Recorded
 
@@ -36,11 +36,13 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 - D-P2-01: Explicit LR literals (8e-5, 2.5e-6) instead of ${times:...} resolver in base.yaml
 - D-P2-02: 4 REQUIRED markers (including experiment_log_dir) not 3
 - D-P2-03: Config names use configs/ prefix with initialize_config_module("sam3.train")
-- D-P2-04: sam3 package stub for smoke test (avoids PyTorch ≥ 2.3 model dep)
+- D-P3-01: ColorJitter/GaussianBlur use PIL-stage datapoint API signature; RandomErasingAPI uses tensor-stage datapoint API signature
+- D-P3-02: val_epoch_freq set to 1 (not 10) for maximum monitoring on 40-epoch runs
+- D-P3-03: TensorBoard block was already present from Phase 2 — no change needed
 
 ## Next Step
 
-Phase 2 complete. Run `/gsd-verify-work 02` to verify or `/gsd-plan-phase 03` to plan Phase 3: Training Loop Integration.
+Phase 3 complete. Run `/gsd-verify-work 03` to verify or `/gsd-plan-phase 04` to plan Phase 4: Checkpoint Export & Validation.
 
 ## Planning Artifacts
 
