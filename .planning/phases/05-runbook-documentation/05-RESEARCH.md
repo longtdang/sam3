@@ -620,17 +620,15 @@ All other claims in this document are verified against source files in this repo
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Torchrun vs. python launcher for FINE_TUNING.md**
+1. **RESOLVED: Torchrun vs. python launcher for FINE_TUNING.md**
    - What we know: `train.py` uses its own process management; `torchrun` is incompatible with `single_node_runner`; D-05-03 specifies `torchrun` commands
-   - What's unclear: Whether the planner should follow D-05-03 literally (document broken commands) or document the verified working commands
-   - Recommendation: **Document the verified `python sam3/train/train.py` commands.** A runbook with broken commands defeats its own purpose. Note in FINE_TUNING.md that training uses internal DDP management (not torchrun).
+   - Resolution: **Document the verified `python sam3/train/train.py` commands.** User confirmed 2026-05-28. D-05-03 updated in CONTEXT.md.
 
-2. **D-05-02 "BatchedDatapoint" wording**
+2. **RESOLVED: D-05-02 "BatchedDatapoint" wording**
    - What we know: D-05-02 says "Preprocess an image into a BatchedDatapoint"; in practice `Sam3Processor` handles this
-   - What's unclear: Whether the user wants to see the BatchedDatapoint construction explicitly
-   - Recommendation: **Use `Sam3Processor` in the code example** (the public API), and add a comment: "Sam3Processor handles BatchedDatapoint construction internally." This satisfies the intent of D-05-02 (full inference example) without requiring users to construct internal data structures.
+   - Resolution: **Use `Sam3Processor` in the code example** (the public API). User confirmed 2026-05-28. D-05-02 updated in CONTEXT.md.
 
 ---
 
