@@ -132,7 +132,18 @@ scratch:
         - _target_: sam3.train.transforms.basic_for_api.PadToSizeAPI
           size: ${scratch.resolution}  # pad to 1008×1008 square
           consistent_transform: ${scratch.consistent_transform}
+        - _target_: sam3.train.transforms.basic.ColorJitter  # D-03-04: PIL stage augmentation
+          brightness: 0.2
+          contrast: 0.2
+          saturation: 0.2
+          hue: 0.0
+        - _target_: sam3.train.transforms.basic.GaussianBlur  # D-03-04: PIL stage augmentation
+          kernel_size: 3
+          sigma: [0.1, 2.0]
         - _target_: sam3.train.transforms.basic_for_api.ToTensorAPI
+        - _target_: sam3.train.transforms.basic.RandomErasingAPI  # D-03-04: tensor stage augmentation
+          p: 0.2
+          scale: [0.02, 0.1]
         - _target_: sam3.train.transforms.filter_query_transforms.FlexibleFilterFindGetQueries
           query_filter:
             _target_: sam3.train.transforms.filter_query_transforms.FilterEmptyTargets  # drop images with no valid boxes post-resize
@@ -212,7 +223,7 @@ trainer:
   max_epochs: ${scratch.max_data_epochs}  # D-12: 40 epochs for small datasets
   accelerator: cuda
   seed_value: 42                    # reproducibility seed
-  val_epoch_freq: 10                # evaluate every 10 epochs
+  val_epoch_freq: 1                 # D-03-06: evaluate every epoch (40-epoch fine-tuning runs)
   mode: train
   gradient_accumulation_steps: ${scratch.gradient_accumulation_steps}  # D-12: 4
 

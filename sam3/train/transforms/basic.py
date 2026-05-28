@@ -386,6 +386,36 @@ class RandomErasing:
         return self.eraser(img), target
 
 
+class ColorJitter:
+    def __init__(self, *args, **kwargs):
+        self.jitter = T.ColorJitter(*args, **kwargs)
+
+    def __call__(self, datapoint, **kwargs):
+        for img in datapoint.images:
+            img.data = self.jitter(img.data)
+        return datapoint
+
+
+class GaussianBlur:
+    def __init__(self, *args, **kwargs):
+        self.blur = T.GaussianBlur(*args, **kwargs)
+
+    def __call__(self, datapoint, **kwargs):
+        for img in datapoint.images:
+            img.data = self.blur(img.data)
+        return datapoint
+
+
+class RandomErasingAPI:
+    def __init__(self, *args, **kwargs):
+        self.eraser = T.RandomErasing(*args, **kwargs)
+
+    def __call__(self, datapoint, **kwargs):
+        for img in datapoint.images:
+            img.data = self.eraser(img.data)
+        return datapoint
+
+
 class Normalize:
     def __init__(self, mean, std):
         self.mean = mean
