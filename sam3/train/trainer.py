@@ -374,6 +374,30 @@ class Trainer:
         for checkpoint_path in checkpoint_paths:
             self._save_checkpoint(checkpoint, checkpoint_path)
 
+        # CKPT-01 / CKPT-02: export model-weights-only inference checkpoint when a best meter fires.
+        # Guard: checkpoint_names intersects the normalized save_best_meters keys.
+        # Regular saves use ["checkpoint"] or ["checkpoint", "checkpoint_N"] — never match.
+        # Best-meter saves use ["val_custom_detection"] — matches "val_custom/detection" normalized.
+        if self.checkpoint_conf.save_best_meters is not None:
+            _best_keys_norm = {
+                k.replace("/", "_") for k in self.checkpoint_conf.save_best_meters
+            }
+            if any(k in _best_keys_norm for k in checkpoint_names):
+                # Build model-weights-only dict in HuggingFace format:
+                #   {"model": {"detector.<key>": <tensor>}}
+                # This satisfies _load_checkpoint requirements:
+                #   - weights_only=True: dict of str→Tensor only ✓
+                #   - "model" key present → ckpt["model"] extracted ✓
+                #   - "detector." prefix → filter passes, prefix stripped ✓
+                _inference_ckpt = {
+                    "model": {
+                        f"detector.{k}": v for k, v in checkpoint["model"].items()
+                    }
+                }
+                _best_path = os.path.join(checkpoint_folder, "best_checkpoint.pth")
+                self._save_checkpoint(_inference_ckpt, _best_path)
+                logging.info(f"[CKPT-01] Saved inference checkpoint: {_best_path}")
+
     def _save_checkpoint(self, checkpoint, checkpoint_path):
         """
         Save a checkpoint while guarding against the job being killed in the middle
