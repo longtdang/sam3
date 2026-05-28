@@ -146,7 +146,12 @@ Plans:
 - [ ] Every shell command in the runbook is copy-pasteable (no placeholder ellipses inside command blocks).
 - [ ] A team member following the runbook cold can produce a non-zero `coco_eval_segm_AP50` result on a fresh CVAT export without additional guidance.
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Create FINE_TUNING.md: §Prerequisites, §1 Prepare Dataset, §2 Configure, §3 Launch, §4 Monitor, §5 Checkpoint, §6 Inference (DOC-01)
+- [ ] 05-02-PLAN.md — Append ##Troubleshooting (5 gotchas) + update STATE.md and ROADMAP.md (DOC-02)
+
 **UI hint**: no
 
 ---
