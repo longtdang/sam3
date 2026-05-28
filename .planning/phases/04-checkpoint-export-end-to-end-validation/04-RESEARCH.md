@@ -502,17 +502,17 @@ if checkpoint_names is not None and self.distributed_rank == 0:
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Sam3Image forward pass input format for test_checkpoint_compatibility.py**
-   - What we know: `build_sam3_image_model(eval_mode=True)` returns a `Sam3Image` in eval mode. D-04-03 says "one forward pass on random 1024×1024 tensor input."
-   - What's unclear: `Sam3Image.forward()` may require a structured batch dict (not a raw tensor). Need to inspect `sam3/model/sam3_image.py` `forward()` signature before writing the verification script.
-   - Recommendation: Check `Sam3Image.forward()` method; if it requires a batch dict, construct a minimal one or use the image predictor wrapper (`SAM3ImagePredictor`) which has a simpler API.
+1. **Sam3Image forward pass input format for test_checkpoint_compatibility.py** — RESOLVED
+   - **Finding**: `Sam3Image.forward()` signature is `def forward(self, input: BatchedDatapoint)` — requires a complex nested dataclass (`img_batch`, `find_text_batch`, `find_inputs`, `find_targets`, `find_metadatas`). No `SAM3ImagePredictor` class exists in the codebase. `SAM3InteractiveImagePredictor` is for a different use case.
+   - **Decision (user, 2025-05-28)**: D-04-03 revised — forward pass dropped. Verify load via `len(model.state_dict()) > 0` and `not model.training`. Success log: `[OK] Model params: <count>`. This fully satisfies CKPT-02 ("loads cleanly without modifications") and VAL-02 ("loads and runs without errors").
 
-2. **`save_best_meters` condition check in patch**
-   - What we know: `checkpoint_names is not None` is True for both best-meter saves and any explicit-name save calls.
-   - What's unclear: Are there other callers of `save_checkpoint(epoch, explicit_names)` besides `_log_meters_and_save_best_ckpts`?
-   - Recommendation: Search trainer.py for all `save_checkpoint(` calls to confirm `_log_meters_and_save_best_ckpts` is the only caller with explicit names. If so, `checkpoint_names is not None` is a safe condition.
+2. **`save_best_meters` condition check in patch** — RESOLVED
+   - **Finding**: Exactly 2 callers of `save_checkpoint()` in `trainer.py`:
+     - Line 596: `self.save_checkpoint(self.epoch + 1)` — no `checkpoint_names`, regular epoch save
+     - Line 996: `self.save_checkpoint(self.epoch + 1, checkpoint_save_keys)` — best-meter save only
+   - **Decision**: `checkpoint_names is not None` guard is safe. The set-intersection guard (`_best_keys_norm`) used in Plan 04-01 is even more robust — it confirms the names overlap with configured `save_best_meters` before writing `best_checkpoint.pth`.
 
 ---
 

@@ -31,12 +31,12 @@ Produce a verified fine-tuned checkpoint on the industrial defect dataset that l
 - **Implementation**: A `scripts/rename_best_checkpoint.sh` wrapper is NOT preferred. Instead, subclass or patch the `_save_checkpoint` method in `trainer.py` to also write a `best_checkpoint.pth` alias when a meter in `save_best_meters` is saved.
 - **Rationale**: CKPT-01 requires `best_checkpoint.pth` as the canonical output artifact. Downstream users and inference scripts will look for this fixed name.
 
-### D-04-03: Verification script behavior
+### D-04-03: Verification script behavior *(revised — user decision 2025-05-28)*
 - **Script**: `scripts/test_checkpoint_compatibility.py`
 - **Behavior**: Silent pass — exits 0 on success, non-zero on failure
-- **On success**: Logs only: `[OK] Loaded checkpoint: <path>` and `[OK] Output tensor shape: <shape>`
-- **Inference call**: Uses `build_sam3_image_model(checkpoint_path=..., enable_segmentation=True)`, then runs one forward pass on a random 1024×1024 tensor input
-- **No metrics required**: Does NOT assert AP50 or run a real eval — shape check + no exception = pass (VAL-02)
+- **On success**: Logs only: `[OK] Loaded checkpoint: <path>` and `[OK] Model params: <count>`
+- **No forward pass**: `Sam3Image.forward()` requires `BatchedDatapoint` (complex nested dataclass); no `SAM3ImagePredictor` exists in the codebase. User accepted substitution: verify load via `len(model.state_dict()) > 0` and `not model.training`.
+- **Load call**: `build_sam3_image_model(checkpoint_path=..., enable_segmentation=True, load_from_HF=False, device='cpu', eval_mode=True)` — exercises the full `_load_checkpoint` code path (CKPT-02 / VAL-02)
 
 ### D-04-04: Fake dataset format for smoke test
 - **Generator script**: `scripts/generate_fake_dataset.py`
