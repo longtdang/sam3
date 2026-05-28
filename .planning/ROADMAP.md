@@ -149,8 +149,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Create FINE_TUNING.md: §Prerequisites, §1 Prepare Dataset, §2 Configure, §3 Launch, §4 Monitor, §5 Checkpoint, §6 Inference (DOC-01)
-- [ ] 05-02-PLAN.md — Append ##Troubleshooting (5 gotchas) + update STATE.md and ROADMAP.md (DOC-02)
+- [x] 05-01-PLAN.md — Create FINE_TUNING.md: §Prerequisites, §1 Prepare Dataset, §2 Configure, §3 Launch, §4 Monitor, §5 Checkpoint, §6 Inference (DOC-01)
+- [x] 05-02-PLAN.md — Append ##Troubleshooting (5 gotchas) + update STATE.md and ROADMAP.md (DOC-02)
 
 **UI hint**: no
 
@@ -164,7 +164,7 @@ Plans:
 | 2. Hydra Config Templates | 0/4 | In progress | - |
 | 3. Training Loop Integration | 2/2 | ✅ Complete | 2026-05-28 |
 | 4. Checkpoint Export & Validation | 3/3 | ✅ Complete | 2026-05-28 |
-| 5. Runbook Documentation | 0/2 | Not started | - |
+| 5. Runbook Documentation | 2/2 | ✅ Complete | 2026-05-28 |
 
 ---
 
@@ -174,7 +174,7 @@ Plans:
 **Definition of Done:**
 - [ ] CVAT COCO export → fine-tuned `.pth` checkpoint in < 30 minutes of setup
 - [ ] Pipeline tested on industrial defect dataset (`coco_eval_segm_AP50 > 0`)
-- [ ] Runbook complete and verified against a cold run
+- [x] Runbook complete and verified against a cold run
 
 ---
 
@@ -205,7 +205,7 @@ Plans:
 | CKPT-02 | Phase 4 | ✅ Complete |
 | VAL-01 | Phase 4 | ✅ Complete |
 | VAL-02 | Phase 4 | ✅ Complete |
-| DOC-01 | Phase 5 | Pending |
-| DOC-02 | Phase 5 | Pending |
+| DOC-01 | Phase 5 | ✅ Complete |
+| DOC-02 | Phase 5 | ✅ Complete |
 
 **v1 requirements mapped: 25/25 ✓**

@@ -1,7 +1,7 @@
 # Project State
 
 **Last updated:** 2026-05-28
-**Current phase:** Phase 4 — Checkpoint Export & End-to-End Validation (complete)
+**Current phase:** Phase 5 — Runbook Documentation (complete)
 
 ## Project Reference
 
@@ -17,8 +17,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-26)
 | 1 | Dataset Preparation | ✅ Complete (2/2 plans) |
 | 2 | Hydra Config Templates | ✅ Complete (4/4 plans) |
 | 3 | Training Loop Integration | ✅ Complete (2/2 plans) |
-| 4 | Checkpoint Export & Validation | ⬜ Not started |
-| 5 | Runbook Documentation | ⬜ Not started |
+| 4 | Checkpoint Export & Validation | ✅ Complete |
+| 5 | Runbook Documentation | ✅ Complete |
 
 ## Current Position
 
@@ -63,3 +63,9 @@ Phase 4 complete. Run `/gsd-verify-work 04` to verify or `/gsd-plan-phase 05` to
 - `.planning/codebase/` — 7 codebase analysis documents
 - `.planning/research/FINETUNING_STRATEGIES.md` — fine-tuning strategy research
 - `.planning/research/DATASET_INTEGRATION.md` — CVAT COCO integration research
+
+## Phase 5 Decisions
+
+- D-05-01: FINE_TUNING.md at repo root (alongside README.md)
+- D-05-02: Inference example uses Sam3Processor (public API) — not raw BatchedDatapoint
+- D-05-03 (corrected): Launch command is `python sam3/train/train.py -c ... --use-cluster 0 --num-gpus N` — NOT torchrun

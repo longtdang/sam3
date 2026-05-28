@@ -270,3 +270,111 @@ for i, (mask, box, score) in enumerate(zip(masks, boxes, scores)):
 - `scores` — float tensor of shape `(N,)` — confidence scores in `[0, 1]`
 
 See [`scripts/test_checkpoint_compatibility.py`](scripts/test_checkpoint_compatibility.py) for a minimal load-and-verify script that checks the checkpoint loads without missing-key warnings.
+
+---
+
+## Troubleshooting
+
+### 1. Segmentation metrics missing — `enable_segmentation` off
+
+**Symptom:** Training runs without error but only bounding-box metrics appear in logs (`loss_bbox`, `loss_ce`). `coco_eval_segm_AP50` is never logged. Validation masks are always empty.
+
+**Cause:** `scratch.enable_segmentation` defaults to `false` in upstream SAM3 detection configs. Our `base.yaml` overrides this to `true`, which cascades to five downstream fields via Hydra interpolation: `collate_fn.with_seg_masks`, `collate_fn_val.with_seg_masks`, `trainer.model.enable_segmentation`, `dataset.load_segmentation`, and the `Masks` loss entry. If any override sets this field back to `false`, or if you start from an upstream config that lacks this field, mask training is silently disabled.
+
+**Fix:** Verify the top of `base.yaml` contains:
+
+```yaml
+scratch:
+  enable_segmentation: true  # CFG-05: drives 5 downstream fields
+```
+
+Do NOT override this field to `false` in any Hydra override. If you copied a config from `sam3/train/configs/roboflow_v100/` or another upstream source, add this field explicitly.
+
+---
+
+### 2. Normalization mismatch (ImageNet vs SAM3 norms)
+
+**Symptom:** Training loss decreases on the training set but inference on unseen images produces poor or random masks. Validation AP50 stays near zero even after 20+ epochs.
+
+**Cause:** SAM3's pre-training used `mean=[0.5, 0.5, 0.5]`, `std=[0.5, 0.5, 0.5]` — NOT ImageNet values (`mean≈[0.485, 0.456, 0.406]`, `std≈[0.229, 0.224, 0.225]`). If custom preprocessing applies ImageNet normalization (common torchvision default), the input pixel distribution is shifted relative to what the pretrained weights expect, degrading all pretrained representations.
+
+**Fix:** `base.yaml` already sets the correct values — do not override them:
+
+```yaml
+scratch:
+  train_norm_mean: [0.5, 0.5, 0.5]  # SAM3 standard; changing breaks pretrained weight compatibility
+  train_norm_std:  [0.5, 0.5, 0.5]
+  val_norm_mean:   [0.5, 0.5, 0.5]
+  val_norm_std:    [0.5, 0.5, 0.5]
+```
+
+For inference, `Sam3Processor.set_image()` applies normalization internally — do NOT normalize the image before passing it to `set_image()`. If loading images with OpenCV, convert BGR → RGB before calling `set_image()` (OpenCV returns BGR; SAM3 expects RGB):
+
+```python
+import cv2
+from PIL import Image
+img = Image.fromarray(cv2.cvtColor(cv2.imread("/path/to/image.jpg"), cv2.COLOR_BGR2RGB))
+state = processor.set_image(img)
+```
+
+---
+
+### 3. 0-based annotation IDs (CVAT export)
+
+**Symptom:** `prepare_dataset.py` runs without error but a split contains 0 images. OR: training starts but the COCO evaluator throws a `KeyError` during eval, or reports AP=0 even when masks look correct in debug outputs.
+
+**Cause:** CVAT sometimes exports annotation and image IDs starting from 0. COCO format requires 1-based IDs for all images, annotations, and categories. SAM3's `COCO_FROM_JSON` loader does not reindex IDs — it loads them as-is. A category ID of 0 can collide with background or cause lookup failures.
+
+**Fix:** Always pipe CVAT exports through `scripts/prepare_dataset.py` — it applies `repair_ids()` automatically, reindexing all image, annotation, and category IDs to start from 1. If you are supplying a manually curated COCO JSON, verify:
+
+```bash
+python3 -c "
+import json
+data = json.load(open('your_annotations.json'))
+min_img_id = min(img['id'] for img in data['images'])
+min_ann_id = min(ann['id'] for ann in data['annotations'])
+min_cat_id = min(cat['id'] for cat in data['categories'])
+print(f'Min IDs -- image: {min_img_id}, annotation: {min_ann_id}, category: {min_cat_id}')
+print('OK' if all(v >= 1 for v in [min_img_id, min_ann_id, min_cat_id]) else 'FAIL: 0-based IDs detected')
+"
+```
+
+---
+
+### 4. `file_name` path prefix collision
+
+**Symptom:** Training crashes immediately with `FileNotFoundError` on the first image. OR: dataset loader initializes without error but reports 0 training samples, and loss is `nan` from the first step.
+
+**Cause:** CVAT exports sometimes include a relative path prefix in the `file_name` field of each image record (e.g., `"images/frame_001.jpg"` instead of `"frame_001.jpg"`). SAM3's dataset loader constructs the full image path as `os.path.join(img_folder, file_name)`. A prefixed name becomes `img_folder/images/frame_001.jpg` — a path that does not exist, causing silent skips or a crash at the first batch.
+
+**Fix:** `scripts/prepare_dataset.py` strips all path prefixes via `repair_filenames()` using `os.path.basename()`. Always use the script's output JSONs, not the raw CVAT export. Set `paths.dataset_img_folder` to the directory that **directly** contains the image files (not a parent directory). The script prints a reminder:
+
+```text
+Set img_folder in your config to the directory directly containing the image files
+(e.g., /path/to/my_dataset/images -- NOT /path/to/my_dataset)
+```
+
+---
+
+### 5. Mask loss not enabled — starting from an upstream config
+
+**Symptom:** No `loss_mask` or `loss_dice` terms appear in TensorBoard. Training produces bounding-box and classification metrics only. `coco_eval_segm_AP50` stays at 0.
+
+**Cause:** The upstream SAM3 reference configs (e.g., `sam3/train/configs/roboflow_v100/`) have the `Masks` loss entry commented out in `loss_fns_find`, because those configs target detection-only runs. Our `base.yaml` has it uncommented. If a user copies an upstream config and edits it instead of starting from `base.yaml`, the mask loss will be absent.
+
+**Fix:** Verify the `Masks` entry is present and uncommented in your config's `loss_fns_find`:
+
+```yaml
+loss_fns_find:
+  - _target_: sam3.train.loss.loss_fns.Boxes
+    # ... (other loss entries)
+  - _target_: sam3.train.loss.loss_fns.Masks   # must be PRESENT and UNCOMMENTED
+    focal_alpha: 0.25
+    focal_gamma: 2.0
+    weight_dict:
+      loss_mask: 200.0
+      loss_dice: 10.0
+    compute_aux: false
+```
+
+Also confirm `scratch.enable_segmentation: true` is set (see Gotcha 1 — the two are independent: `enable_segmentation` controls mask loading and model head activation; the `Masks` loss entry controls whether mask gradients are computed during training).
