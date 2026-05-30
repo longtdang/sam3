@@ -980,7 +980,7 @@ class ViT(nn.Module):
         masks = None
         for i, blk in enumerate(self.blocks):
             if self.use_act_checkpoint and self.training:
-                x = checkpoint.checkpoint(blk, x, use_reentrant=False)
+                x = checkpoint.checkpoint(blk, x, use_reentrant=True)
             else:
                 x = blk(x)
             if (i == self.full_attn_ids[-1]) or (
