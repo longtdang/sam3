@@ -6,11 +6,11 @@ defaults:
 # Paths — Edit these 4 fields to run on your dataset (all others have defaults)
 # ============================================================================
 paths:
-  dataset_img_folder: null  # REQUIRED: absolute path to directory containing your images (train + val share the same dir when using prepare_dataset.py)
-  train_ann_file: null       # REQUIRED: absolute path to train.json produced by scripts/prepare_dataset.py
-  val_ann_file: null         # REQUIRED: absolute path to val.json produced by scripts/prepare_dataset.py
-  experiment_log_dir: null   # REQUIRED: absolute path for checkpoints, TensorBoard logs, and eval dumps
-  bpe_path: null             # Optional: null = use bundled vocab at sam3/assets/bpe_simple_vocab_16e6.txt.gz (recommended)
+  dataset_img_folder: /home/longtdang/KMS/sam3/00_raw/images  # REQUIRED: absolute path to directory containing your images (train + val share the same dir when using prepare_dataset.py)
+  train_ann_file: /home/longtdang/KMS/sam3/00_raw/coco/train.json  # REQUIRED: absolute path to train.json produced by scripts/prepare_dataset.py
+  val_ann_file: /home/longtdang/KMS/sam3/00_raw/coco/val.json      # REQUIRED: absolute path to val.json produced by scripts/prepare_dataset.py
+  experiment_log_dir: /home/longtdang/KMS/sam3/experiments  # REQUIRED: absolute path for checkpoints, TensorBoard logs, and eval dumps
+  bpe_path: /home/longtdang/KMS/sam3/sam3/assets/bpe_simple_vocab_16e6.txt.gz  # Optional: null = use bundled vocab at sam3/assets/bpe_simple_vocab_16e6.txt.gz (recommended)
 
 # ============================================================================
 # Scratch — Shared interpolation variables (edit values here; ${scratch.*} used below)
@@ -290,6 +290,8 @@ trainer:
     device: cpus
     eval_mode: false
     enable_segmentation: ${scratch.enable_segmentation}  # CFG-05: activates mask decoding head in model
+    checkpoint_path: /home/longtdang/KMS/sam3/models/sam3_origin/sam3.pt
+    load_from_HF: false
 
   meters:
     val:
