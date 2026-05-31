@@ -54,29 +54,31 @@ scratch:
   # --- Training schedule (D-12: small-dataset defaults for < 500 images) ---
   max_data_epochs: 40     # controls trainer.max_epochs via interpolation
   target_epoch_size: 500  # documentation-only — not consumed by Trainer code
-  num_train_workers: 4    # dataloader worker processes for training
+  num_train_workers: 2    # L4: reduced from 4 to lower CPU↔GPU memory pressure
   num_val_workers: 0      # 0 = no multiprocessing for eval (avoids eval deadlocks)
   hybrid_repeats: 1       # dataset repeat factor within one epoch (1 = no repeat)
   context_length: 2       # text query token count (do not change)
   gather_pred_via_filesys: false  # True only for large multi-node distributed eval
 
-  # --- Learning rates (D-08/D-12: decoder-only defaults, explicit literals not ${times:...} resolver) ---
-  # INFORMATIONAL — lr_scale does not affect optimizer LRs (see explicit values below).
-  # Adjusting lr_scale has no effect; change the literal values directly.
-  lr_scale: 0.03           # informational: backbone LR ≈ 0.03× transformer LR (for reference only)
-  lr_transformer: 8e-5     # D-12: transformer / cross-attention / class head LR
-  lr_vision_backbone: 2.5e-6  # D-12: ViT trunk LR (low → near-frozen in decoder-only)
-  lr_language_backbone: 1.5e-6  # language backbone LR
+  # --- Learning rates (decoder-only fine-tune for L4) ---
+  # Vision backbone set to 0.0 to truly freeze it (no gradient computation).
+  # This is the single biggest memory saving on L4 — ViT is ~300M params.
+  lr_scale: 0.03
+  lr_transformer: 8e-5
+  lr_vision_backbone: 0.0       # L4: unused — backbone frozen via freeze_vision_backbone=true
+  lr_language_backbone: 0.0     # L4: unused — backbone frozen via freeze_language_backbone=true
   lrd_vision_backbone: 0.9  # layer-wise LR decay exponent across ViT trunk layers
   wd: 0.1                  # AdamW weight decay
   scheduler_timescale: 20  # inverse square root warmup timescale
   scheduler_warmup: 20     # warmup steps
   scheduler_cooldown: 20   # cooldown steps at training end
 
-  # --- Batch and accumulation (D-12: effective batch = train_batch_size × gradient_accumulation_steps = 4) ---
+  # --- Batch and accumulation ---
+  # gradient_accumulation_steps: 1 fixes the "Expected a list of batches, got dict" crash.
+  # With train_batch_size=1, effective batch = 1. Use gradient_accumulation_steps=1 on L4.
   val_batch_size: 1
   train_batch_size: 1
-  gradient_accumulation_steps: 4  # D-12: accumulate 4 steps before optimizer update
+  gradient_accumulation_steps: 1  # L4: set to 1 to fix crash and reduce memory (was 4)
 
   # --- Presence head ---
   use_presence_eval: True  # use presence head during evaluation (SAM3 standard setting)
@@ -231,6 +233,7 @@ trainer:
     backend: nccl
     find_unused_parameters: True    # required: SAM3 has conditional graph branches
     gradient_as_bucket_view: True   # memory optimization for DDP gradient buckets
+    static_graph: True
 
   loss:
     custom: ${scratch.loss}         # "custom" key must match collate_fn.dict_key
@@ -270,7 +273,7 @@ trainer:
         coco_json_loader:
           _target_: sam3.train.data.coco_json_loaders.COCO_FROM_JSON
           include_negatives: true          # include images with 0 annotations in eval set
-          category_chunk_size: 2           # categories per forward pass; increase if GPU OOM during eval
+          category_chunk_size: 1           # L4: reduced from 2 to lower GPU OOM risk during eval
           _partial_: true
         transforms: ${scratch.val_transforms}
         max_ann_per_img: 100000
@@ -287,11 +290,13 @@ trainer:
   model:
     _target_: sam3.model_builder.build_sam3_image_model
     bpe_path: ${paths.bpe_path}    # null = use bundled sam3/assets/bpe_simple_vocab_16e6.txt.gz
-    device: cpus
+    device: cuda
     eval_mode: false
     enable_segmentation: ${scratch.enable_segmentation}  # CFG-05: activates mask decoding head in model
     checkpoint_path: /home/longtdang/KMS/sam3/models/sam3_origin/sam3.pt
     load_from_HF: false
+    freeze_vision_backbone: true    # L4: truly freeze ViT — prevents grad through inference-only fused ops
+    freeze_language_backbone: true  # L4: truly freeze language backbone
 
   meters:
     val:
@@ -313,7 +318,7 @@ trainer:
   optim:
     amp:
       enabled: True
-      amp_dtype: bfloat16  # mixed-precision (bfloat16 for Ampere+ GPUs; use float16 for older)
+      amp_dtype: float16  # T4 is Turing (sm_75) — use float16 which has native Tensor Core support; bfloat16 requires Ampere (sm_80+) and conflicts with the always-enabled GradScaler
 
     optimizer:
       _target_: torch.optim.AdamW
@@ -323,39 +328,18 @@ trainer:
       max_norm: 0.1   # clip gradient norm (SAM3 standard value)
       norm_type: 2
 
-    param_group_modifiers:
-      - _target_: sam3.train.optim.optimizer.layer_decay_param_modifier
-        _partial_: True
-        layer_decay_value: ${scratch.lrd_vision_backbone}  # 0.9 layer-wise LR decay across ViT trunk
-        apply_to: 'backbone.vision_backbone.trunk'
-        overrides:
-          - pattern: '*pos_embed*'
-            value: 1.0  # position embeddings are not layer-decayed
+    param_group_modifiers: []  # L4: no layer decay — vision backbone is fully frozen
 
     options:
       lr:
-        - scheduler:  # transformer layers, cross-attention, class/query heads
+        - scheduler:  # transformer layers, cross-attention, class/query heads only (backbones are frozen)
             _target_: sam3.train.optim.schedulers.InverseSquareRootParamScheduler
             base_lr: ${scratch.lr_transformer}     # D-12: 8e-5
             timescale: ${scratch.scheduler_timescale}
             warmup_steps: ${scratch.scheduler_warmup}
             cooldown_steps: ${scratch.scheduler_cooldown}
-        - scheduler:  # ViT vision backbone (near-frozen in decoder-only via low lr_vision_backbone)
-            _target_: sam3.train.optim.schedulers.InverseSquareRootParamScheduler
-            base_lr: ${scratch.lr_vision_backbone}  # D-12: 2.5e-6
-            timescale: ${scratch.scheduler_timescale}
-            warmup_steps: ${scratch.scheduler_warmup}
-            cooldown_steps: ${scratch.scheduler_cooldown}
-          param_names:
-            - 'backbone.vision_backbone.*'
-        - scheduler:  # language backbone
-            _target_: sam3.train.optim.schedulers.InverseSquareRootParamScheduler
-            base_lr: ${scratch.lr_language_backbone}  # 1.5e-6
-            timescale: ${scratch.scheduler_timescale}
-            warmup_steps: ${scratch.scheduler_warmup}
-            cooldown_steps: ${scratch.scheduler_cooldown}
-          param_names:
-            - 'backbone.language_backbone.*'
+        # backbone param groups removed — backbones are fully frozen (requires_grad=False)
+        # so they generate no optimizer state and no gradient computation
 
       weight_decay:
         - scheduler:

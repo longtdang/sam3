@@ -579,6 +579,8 @@ def build_sam3_image_model(
     enable_segmentation=True,
     enable_inst_interactivity=False,
     compile=False,
+    freeze_vision_backbone=False,
+    freeze_language_backbone=False,
 ):
     """
     Build SAM3 image model
@@ -591,6 +593,9 @@ def build_sam3_image_model(
         enable_segmentation: Whether to enable segmentation head
         enable_inst_interactivity: Whether to enable instance interactivity (SAM 1 task)
         compile_mode: To enable compilation, set to "default"
+        freeze_vision_backbone: If True, freeze all vision backbone parameters (no grad).
+            Required when lr_vision_backbone=0 to avoid errors from inference-only fused ops.
+        freeze_language_backbone: If True, freeze all language backbone parameters (no grad).
 
     Returns:
         A SAM3 image model
@@ -647,6 +652,14 @@ def build_sam3_image_model(
     # Load checkpoint if provided
     if checkpoint_path is not None:
         _load_checkpoint(model, checkpoint_path)
+
+    # Freeze backbones if requested. Must be done AFTER checkpoint load and BEFORE
+    # DDP wrapping. Freezing prevents gradient computation through inference-only
+    # fused ops (e.g. addmm_act in vitdet.py MLP) that raise when grad is enabled.
+    if freeze_vision_backbone:
+        model.backbone.vision_backbone.requires_grad_(False)
+    if freeze_language_backbone:
+        model.backbone.language_backbone.requires_grad_(False)
 
     # Setup device and mode
     model = _setup_device_and_mode(model, device, eval_mode)

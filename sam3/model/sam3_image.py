@@ -491,7 +491,7 @@ class Sam3Image(torch.nn.Module):
                 hs=hs,
             )
 
-        if self.training or self.num_interactive_steps_val > 0:
+        if find_target is not None:
             self._compute_matching(out, self.back_convert(find_target))
         return out
 
